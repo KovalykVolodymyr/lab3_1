@@ -95,5 +95,15 @@ public class BookKeeperTest {
         Assert.assertThat(invoice.getNet(), is(money.add(money)));
     }
 
+  @Test
+    public void invoicRequestWithOneItemdCallTaxPolicyOnce() {
+      ProductData productData = new ProductData(Id.generate(), Money.ZERO, "Product", ProductType.FOOD, new Date());
+      RequestItem item = new RequestItem(productData, 1, this.money);
+      invoiceRequest.add(item);
+
+        keeper.issuance(invoiceRequest, taxPolicy);
+        verify(taxPolicy, times(1)).calculateTax(any(), any());
+    }
+
 
 }
