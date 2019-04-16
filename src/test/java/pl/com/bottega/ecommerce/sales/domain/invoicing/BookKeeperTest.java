@@ -22,8 +22,7 @@ import java.util.Date;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BookKeeperTest {
@@ -52,6 +51,20 @@ public class BookKeeperTest {
         Invoice invoice = keeper.issuance(invoiceRequest, taxPolicy);
         Assert.assertThat(invoice.getItems().size(),is(1));
 
+
+    }
+
+    @Test
+    public void  whenCallingTheReleaseMethod(){
+        ProductData productData = new ProductData(Id.generate(), Money.ZERO, "Product", ProductType.FOOD, new Date());
+        ProductData productData1 = new ProductData(Id.generate(), Money.ZERO, "Product", ProductType.STANDARD, new Date());
+        RequestItem item = new RequestItem(productData,1,Money.ZERO);
+        RequestItem item1 = new RequestItem(productData1,1,Money.ZERO);
+        invoiceRequest.add(item);
+        invoiceRequest.add(item1);
+        keeper.issuance(invoiceRequest, taxPolicy);
+        verify(taxPolicy, times(1)).calculateTax(ProductType.FOOD, Money.ZERO);
+        verify(taxPolicy, times(1)).calculateTax(ProductType.STANDARD, Money.ZERO);
 
     }
 
