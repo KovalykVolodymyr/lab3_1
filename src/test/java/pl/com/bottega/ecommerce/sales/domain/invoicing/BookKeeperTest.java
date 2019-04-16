@@ -55,7 +55,7 @@ public class BookKeeperTest {
     }
 
     @Test
-    public void  whenCallingTheReleaseMethod(){
+    public void  givenInvoiceRequestWithTwoItem(){
         ProductData productData = new ProductData(Id.generate(), Money.ZERO, "Product", ProductType.FOOD, new Date());
         ProductData productData1 = new ProductData(Id.generate(), Money.ZERO, "Product", ProductType.STANDARD, new Date());
         RequestItem item = new RequestItem(productData,1,Money.ZERO);
