@@ -68,6 +68,18 @@ public class BookKeeperTest {
 
     }
 
+    @Test
+    public void invoiceRequestWithoutItemsBeEmpty() {
+        Invoice invoice = keeper.issuance(invoiceRequest, taxPolicy);
+        invoice.getGros();
+        Assert.assertThat(invoice.getItems().size(),is(0));
+    }
+
+    @Test
+    public void invoiceRequestWithoutItemsNotCallTaxPolicy() {
+        keeper.issuance(invoiceRequest, taxPolicy);
+        verifyZeroInteractions(taxPolicy);
+    }
 
 
 
