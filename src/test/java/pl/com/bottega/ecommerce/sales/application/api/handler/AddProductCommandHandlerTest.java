@@ -71,7 +71,7 @@ public class AddProductCommandHandlerTest {
         verify(reservationRepository, times(1)).load(any());
     }
     @Test
-    public void methodSaveShouldBeCalled() {
+    public void suggestionServiceMethodNotBeCalledForEmptyComand() {
         addProductCommandHandler.handle(command);
         verify(suggestionService, never()).suggestEquivalent(any(Product.class), any(Client.class));
     }
