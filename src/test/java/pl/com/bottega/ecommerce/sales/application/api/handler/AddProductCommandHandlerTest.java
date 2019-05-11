@@ -68,7 +68,7 @@ public class AddProductCommandHandlerTest {
         verify(reservationRepository, times(1)).load(any());
     }
     @Test
-    public void suggestionServiceMethodNotBeCalled() {
+    public void methodSaveShouldBeCalled() {
         addProductCommandHandler.handle(command);
         verify(suggestionService, never()).suggestEquivalent(any(Product.class), any(Client.class));
     }
