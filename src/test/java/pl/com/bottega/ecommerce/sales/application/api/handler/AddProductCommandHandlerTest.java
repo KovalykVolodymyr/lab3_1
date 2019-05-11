@@ -34,30 +34,33 @@ import static org.mockito.Mockito.*;
 public class AddProductCommandHandlerTest {
     private AddProductCommandHandler addProductCommandHandler;
     private AddProductCommand command;
-    @Mock
     private ReservationRepository reservationRepository;
-    @Mock
     private ProductRepository productRepository;
-    @Mock
     private SuggestionService suggestionService;
-    @Mock
     private ClientRepository clientRepository;
-    @Mock
     private SystemContext systemContext;
-    @Mock
     private Reservation reservation;
-    @Mock
     private Product product;
     @Before
     public void setUp() {
-        command = new AddProductCommand(Id.generate(), Id.generate(),1);
-        Client client = new Client();
-        when(product.isAvailable()).thenReturn(true);
-        when(reservationRepository.load(any())).thenReturn(reservation);
-        when(productRepository.load(any())).thenReturn(product);
-        when(suggestionService.suggestEquivalent(product, client)).thenReturn(product);
-        addProductCommandHandler = new AddProductCommandHandler(reservationRepository, productRepository, suggestionService,
-                clientRepository, systemContext);
+        reservationRepository = mock(ReservationRepository.class);
+        productRepository = mock(ProductRepository.class);
+        suggestionService = mock(SuggestionService.class);
+        clientRepository = mock(ClientRepository.class);
+        systemContext = mock(SystemContext.class);
+        addProductCommandHandler = new AddProductCommandHandler();
+        command = new AddProductCommand(Id.generate(),Id.generate(),3);
+        reservation = new Reservation(Id.generate(), Reservation.ReservationStatus.OPENED,new ClientData(Id.generate(),"Name"),new Date());
+        product = new Product(Id.generate(), new Money(10), "product", ProductType.STANDARD);
+
+        when(reservationRepository.load(command.getOrderId())).thenReturn(reservation);
+        when(productRepository.load(command.getProductId())).thenReturn(product);
+
+        Whitebox.setInternalState(addProductCommandHandler, "reservationRepository", reservationRepository);
+        Whitebox.setInternalState(addProductCommandHandler, "clientRepository", clientRepository);
+        Whitebox.setInternalState(addProductCommandHandler, "productRepository", productRepository);
+        Whitebox.setInternalState(addProductCommandHandler, "suggestionService", suggestionService);
+        Whitebox.setInternalState(addProductCommandHandler, "systemContext", systemContext);
 
     }
 
@@ -71,6 +74,14 @@ public class AddProductCommandHandlerTest {
     public void methodSaveShouldBeCalled() {
         addProductCommandHandler.handle(command);
         verify(suggestionService, never()).suggestEquivalent(any(Product.class), any(Client.class));
+    }
+    @Test
+    public void methodSaveShouldBeCalledOnes() {
+        final int testValue = 1;
+
+        addProductCommandHandler.handle(command);
+
+        verify(reservationRepository, times(testValue)).save(reservation);
     }
 
 }
